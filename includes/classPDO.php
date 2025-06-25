@@ -1,6 +1,6 @@
 <?php
 class PdoMaasserApp
-{
+{   //cette page regroupe les fonctions qui sont en lien avec la base de donnée
     //initialise les attributrs en privés
     private static $serveur = 'mysql:host=localhost';
     private static $bdd = 'dbname=maasserapp';
@@ -56,8 +56,33 @@ class PdoMaasserApp
     $requetePrepare->bindParam(':unEmail',$email,PDO::PARAM_STR);
     $requetePrepare->bindParam(':unMdp',$mdpHach,PDO::PARAM_STR);
     $requetePrepare->execute();
-    return $requetePrepare->rowCount()>0;
+    return $requetePrepare->rowCount()>0;}
+
+    public function verifConnexion($email){
+     $requetePrepare = PdoMaasserApp::$monPdo->prepare(
+        'SELECT * FROM utilisateurs WHERE email=:unEmail');
+
+    $requetePrepare->bindParam(':unEmail',$email,PDO::PARAM_STR);
+    $requetePrepare->execute();
+    $resultat=$requetePrepare->fetch(PDO::FETCH_ASSOC);
+    return $resultat;
+
    
+}
+public function verifMailExist($email){
+     $requetePrepare = PdoMaasserApp::$monPdo->prepare(
+        'SELECT COUNT(*) FROM utilisateurs WHERE email=:unEmail');
+        $requetePrepare->bindParam(':unEmail',$email,PDO::PARAM_STR);
+    $requetePrepare->execute();
+    $resultat=$requetePrepare->fetchColumn();
+    return $resultat>0;}
+public function verifRevenuExist($id){
+     $requetePrepare = PdoMaasserApp::$monPdo->prepare(
+        'SELECT COUNT(*) FROM revenus WHERE utilisateur_id=:unId');
+        $requetePrepare->bindParam(':unId',$id,PDO::PARAM_STR);
+    $requetePrepare->execute();
+    $resultat=$requetePrepare->fetchColumn();
+    return $resultat>0;//retourne true si une source de revenu existe,false sinon
 }
 
 
